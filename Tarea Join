@@ -1,0 +1,76 @@
+/*Univercidad DB*/
+
+use universities;
+go
+
+SELECT university_name, country_name  FROM university INNER JOIN country on country_id = country.id;
+
+
+SELECT country.id, country_name, COUNT(*) as Cantidad from country INNER JOIN university on country_id = country.id GROUP BY country.id , country_name;
+
+/
+SELECT COUNT(*) as Paises_Sin_Universidad from country left join university on country_id = country.id where country_id is null;
+
+
+SELECT ranking_system_id,  ranking_system.system_name, criteria_name  from ranking_criteria inner join ranking_system on ranking_system_id =ranking_system.id;
+
+
+SELECT MAX(ranking_system_id), ranking_system.system_name,  COUNT(*) as Cantidad from ranking_criteria inner join ranking_system on ranking_system_id = ranking_system.id GROUP by ranking_system.system_name;
+
+SELECT university_id, university_name, criteria_name, score as Score, university_ranking_year.year from ranking_criteria INNER Join (university_ranking_year INNER JOIN university on university_id = university.id) on ranking_criteria_id = ranking_criteria.id where university_ranking_year.year = 2012 GROUP by score, university_id, university_name, criteria_name, university_ranking_year.year order by criteria_name DESC ; 
+
+
+SELECT TOP 5 university_id, university_ranking_year.year, university_name, count(score) as CantidadDe100 from (ranking_criteria INNER JOIN ranking_system on ranking_criteria.id = ranking_system_id) INNER Join (university_ranking_year INNER JOIN university on university_id = university.id) on ranking_criteria_id = ranking_criteria.id where (score = 100 and ranking_system.system_name = 'Center for World University Rankings') GROUP by university_id, university_name, university_ranking_year.year;   
+
+
+SELECT country.id, country.country_name, university.university_name, year from (country INNER Join university on university.country_id = country.id) JOIN university_ranking_year on university.id = university_id where score > 90;
+
+
+SELECT university_id, university_name, ranking_system.system_name, year from (university INNER JOIN university_ranking_year on university.id = university_id) INNER JOIN (ranking_criteria INNER JOIN ranking_system on ranking_system_id = ranking_system.id) on ranking_criteria_id = ranking_criteria.id where (ranking_system.system_name = 'Shanghai Ranking');  
+
+
+SELECT TOP 10  university_id, university_ranking_year.year, university_name, score from (ranking_criteria INNER JOIN ranking_system on ranking_criteria.id = ranking_system_id) INNER Join (university_ranking_year INNER JOIN university on university_id = university.id) on ranking_criteria_id = ranking_criteria.id where (ranking_system.system_name = 'Times Higher Education World University Ranking') ORDER by score ASC;
+
+
+
+/*SuperHeroes DB*/
+use superhero;
+
+
+SELECT superhero.id, superhero_name, power_name from superhero INNER JOIN superpower on superpower.id = superhero.id;
+
+
+SELECT superhero.id, superhero_name, COUNT(*) as cantidad_Poderes from  superhero INNER JOIN superpower on superpower.id = superhero.id GROUP BY superhero.id, superhero_name; 
+
+
+SELECT TOP 10 superpower.power_name, COUNT(*) as cantidad_Poderes from  superhero INNER JOIN superpower on superpower.id = superhero.id GROUP BY superpower.power_name;
+
+
+SELECT TOP 10 superpower.power_name, COUNT(*) as cantidad_Poderes from  superhero INNER JOIN superpower on superpower.id = superhero.id GROUP BY superpower.power_name;
+
+
+SELECT hero_id, superhero_name, [attribute].attribute_name from (superhero INNER JOIN hero_attribute on hero_id = superhero.id) INNER JOIN [attribute] on [attribute].id = attribute_id where [attribute].attribute_name != 'Intelligence';
+
+SELECT superhero_name, COUNT([attribute].attribute_name) AS numeroAtributos from superhero INNER JOIN hero_attribute on hero_attribute.hero_id = superhero.id INNER JOIN [attribute] on [attribute].id  = hero_attribute.attribute_id GROUP BY superhero.superhero_name HAVING COUNT(attribute_name) = 5 or COUNT(attribute_name) = 3;  
+
+
+SELECT superhero.id, superhero_name, gender.gender from superhero INNER JOIN gender ON superhero.gender_id  = gender.id where gender.id = 1;
+
+
+SELECT superhero.id, superhero_name, Ojos.colour as Color_Ojos, Pelo.colour as Color_Pelo,
+SKIN.colour as Color_Traje from superhero INNER JOIN colour as Ojos on superhero.eye_colour_id = Ojos.id
+JOIN colour as Pelo on Pelo.id = superhero.hair_colour_id JOIN colour as SKIN on SKIN.id = superhero.skin_colour_id;
+
+SELECT superhero.id, superhero.superhero_name, race.race, superpower.power_name FROM (superhero INNER JOIN race on superhero.race_id = race.id) JOIN superpower on superpower.id = superhero.id ;
+
+
+SELECT publisher.publisher_name, COUNT(superhero.alignment_id) from (superhero join alignment a on superhero.alignment_id = a.id) JOIN publisher on publisher.id = superhero.publisher_id where superhero.alignment_id = 1 GROUP By publisher.publisher_name;
+
+/*SELECT * from alignment a;
+select * from colour;
+SELECT * FROM superhero;
+SELECT * FROM superpower;
+SELECT * FROM [attribute];
+SELECT * FROM hero_attribute;
+SELECT * from gender;
+SELECT * from publisher b;*/
